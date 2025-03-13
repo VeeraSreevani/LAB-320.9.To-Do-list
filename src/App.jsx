@@ -1,6 +1,6 @@
 import Todo from "./components/Todo";
 import initialState from "./data/data";
-import { useReducer,useState } from "react";
+import { useReducer, useState } from "react";
 
 // Reducer
 function todosReducer(state, action) {
@@ -14,10 +14,24 @@ function todosReducer(state, action) {
         id: state.length + 1,
         userId: 1,
       };
-      //case "toggle_todo"
-      //return(state.map(todo=> todo.id ===action.payload ?{...todo, completed: !todo.completed} :todo)
       return [newTodo, ...state];
     }
+    case "toggle_todo":{
+      return(state.map(todo=> todo.id ===action.payload ?{...todo, completed: !todo.completed} :todo))}
+
+      case "delete_todo":{
+        return state.filter(todo => todo.id !== action.payload)
+      }
+
+      case "edit_todo":{
+        return state.map(todo=>
+          todo.id === action.payload.id ? 
+          {...todo, title: action.payload.title}
+          :todo
+        );
+      }
+
+
     default: {
       return state;
     }
@@ -25,11 +39,13 @@ function todosReducer(state, action) {
 }
 
 function App() {
+
   const [newTodo, setNewTodo] = useState("");
   const [todos, dispatch] = useReducer(todosReducer, initialState);
   // console.log(todos);
   const handleClick = () => {
     dispatch({ type: "add_todo", payload: newTodo });
+    setNewTodo("");
   };
   return (
     <>
@@ -43,7 +59,7 @@ function App() {
       <button onClick={handleClick}>Add</button>
 
       {todos.map((t) => (
-        <Todo todo={t} key={t.id} />
+        <Todo todo={t} key={t.id} dispatch= {dispatch} />
       ))}
     </>
   );
@@ -51,4 +67,4 @@ function App() {
 
 export default App;
 
-// {...t}
+
